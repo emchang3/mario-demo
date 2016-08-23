@@ -9,9 +9,17 @@ import createSagaMiddleware from 'redux-saga'
 import rootSaga from './sagas/sagas'
 import reducer from './reducers'
 
+import { App } from './app'
+
+
 const sagaMiddleware = createSagaMiddleware()
 const initialState = {
-  mario: null,
+  mario: {
+    position: [100, 100],
+    facing: 'right',
+    moving: false,
+    jumping: false
+  },
   env: [],
   weapons: [],
   powerUps: [],
@@ -23,12 +31,11 @@ export const store = createStore(reducer, initialState, compose(
 ))
 sagaMiddleware.run(rootSaga, store.getState)
 
+
 function render() {
   ReactDOM.render(
     <Provider store={store}>
-      <div>
-        Hello.
-      </div>
+      <App />
     </Provider>,
     document.getElementById('root')
   )
