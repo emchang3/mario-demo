@@ -87,7 +87,8 @@
 	    position: [100, 100],
 	    facing: 'right',
 	    moving: false,
-	    jumping: false
+	    jumping: false,
+	    heading: 'none'
 	  },
 	  env: [],
 	  weapons: [],
@@ -31268,7 +31269,7 @@
 	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	  var action = arguments[1];
 
-	  // console.log('general action', action)
+	  // console.log('reducing', action)
 	  switch (action.type) {
 	    case _heroActions.SET_MOVING:
 	      return _extends({}, state, { mario: _extends({}, state.mario, { moving: action.isMoving }) });
@@ -31276,6 +31277,10 @@
 	      return _extends({}, state, { mario: _extends({}, state.mario, { position: action.position }) });
 	    case _heroActions.SET_FACING:
 	      return _extends({}, state, { mario: _extends({}, state.mario, { facing: action.direction }) });
+	    case _heroActions.SET_JUMPING:
+	      return _extends({}, state, { mario: _extends({}, state.mario, { jumping: action.isJumping }) });
+	    case _heroActions.SET_HEADING:
+	      return _extends({}, state, { mario: _extends({}, state.mario, { heading: action.orientation }) });
 	    default:
 	      return state;
 	  }
@@ -31344,8 +31349,8 @@
 	        position: 'absolute',
 	        bottom: mario.position[0],
 	        left: mario.position[1],
-	        width: '100px',
-	        height: '150px',
+	        width: '50px',
+	        height: '75px',
 	        border: '1px dotted black'
 	      }
 	    },
@@ -31443,13 +31448,37 @@
 	      var startPos = _this.props.mario.position[1];
 
 	      var horizontalTimer = setInterval(function () {
-	        var step = Math.min(1, (new Date().getTime() - startTime) / 5000);
+	        var step = Math.min(1, (new Date().getTime() - startTime) / 4000);
 	        var increment = step * parseFloat(window.innerWidth);
 	        var style = _this.props.mario.position;
 	        direction === 'right' ? style[1] = startPos + increment : style[1] = startPos - increment;
 	        _this.props.setPosition(style);
 	        if (step === 1 || _this.props.mario.moving === false || _this.props.mario.facing !== direction) {
 	          clearInterval(horizontalTimer);
+	        }
+	      }, 0.0001);
+	    };
+
+	    _this.vShift = function (orientation) {
+	      var startTime = new Date().getTime();
+	      var startPos = _this.props.mario.position[0];
+
+	      var horizontalTimer = setInterval(function () {
+	        var step = Math.min(1, (new Date().getTime() - startTime) / 400);
+	        var increment = orientation === 'up' ? Math.pow(step, 0.5) * 175 : Math.pow(step, 2) * 175;
+	        var style = _this.props.mario.position;
+	        orientation === 'up' ? style[0] = startPos + increment : style[0] = startPos - increment;
+	        _this.props.setPosition(style);
+	        if (step === 1 || _this.props.mario.jumping === false) {
+	          clearInterval(horizontalTimer);
+	          if (orientation === 'down') {
+	            _this.props.setHeading('none');
+	            _this.props.setJumping(false);
+	          }
+	          if (orientation === 'up') {
+	            _this.props.setHeading('down');
+	            _this.vShift('down');
+	          }
 	        }
 	      }, 0.0001);
 	    };
@@ -31462,9 +31491,17 @@
 	      }
 	    };
 
+	    _this.keyPress = function (event) {
+	      if (event.key === ' ' && _this.props.mario.jumping === false) {
+	        _this.props.setJumping(true);
+	        _this.props.setHeading('up');
+	        _this.vShift('up');
+	      }
+	    };
+
 	    _this.componentDidMount = function () {
 	      window.addEventListener('keydown', _this.keyDown);
-	      // window.addEventListener('keypress', this.keyPress)
+	      window.addEventListener('keypress', _this.keyPress);
 	    };
 
 	    return _this;
@@ -31497,6 +31534,12 @@
 	    },
 	    setFacing: function setFacing(direction) {
 	      return dispatch((0, _heroActions.setFacing)(direction));
+	    },
+	    setHeading: function setHeading(orientation) {
+	      return dispatch((0, _heroActions.setHeading)(orientation));
+	    },
+	    setJumping: function setJumping(isJumping) {
+	      return dispatch((0, _heroActions.setJumping)(isJumping));
 	    }
 	  };
 	};
@@ -31516,6 +31559,8 @@
 	var SET_MOVING = exports.SET_MOVING = 'SET_MOVING';
 	var SET_POSITION = exports.SET_POSITION = 'SET_POSITION';
 	var SET_FACING = exports.SET_FACING = 'SET_FACING';
+	var SET_JUMPING = exports.SET_JUMPING = 'SET_JUMPING';
+	var SET_HEADING = exports.SET_HEADING = 'SET_HEADING';
 
 	var setMoving = exports.setMoving = function setMoving(isMoving) {
 	  return {
@@ -31535,6 +31580,20 @@
 	  return {
 	    type: SET_FACING,
 	    direction: direction
+	  };
+	};
+
+	var setJumping = exports.setJumping = function setJumping(isJumping) {
+	  return {
+	    type: SET_JUMPING,
+	    isJumping: isJumping
+	  };
+	};
+
+	var setHeading = exports.setHeading = function setHeading(orientation) {
+	  return {
+	    type: SET_HEADING,
+	    orientation: orientation
 	  };
 	};
 

@@ -18,7 +18,8 @@ const initialState = {
     position: [100, 100],
     facing: 'right',
     moving: false,
-    jumping: false
+    jumping: false,
+    heading: 'none'
   },
   env: [],
   weapons: [],

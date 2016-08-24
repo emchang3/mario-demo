@@ -11,8 +11,8 @@ const Mario = ({ mario }) => {
         position: 'absolute',
         bottom: mario.position[0],
         left: mario.position[1],
-        width: '100px',
-        height: '150px',
+        width: '50px',
+        height: '75px',
         border: '1px dotted black'
       }}
     >
