@@ -79,18 +79,20 @@
 
 	var _app = __webpack_require__(492);
 
+	var _levelOne = __webpack_require__(499);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var sagaMiddleware = (0, _reduxSaga2.default)();
 	var initialState = {
 	  mario: {
-	    position: [100, 100],
+	    position: [50, 50],
 	    facing: 'right',
 	    moving: false,
 	    jumping: false,
 	    heading: 'none'
 	  },
-	  env: [],
+	  env: _levelOne.levelOne,
 	  weapons: [],
 	  powerUps: [],
 	  view: [0, window.innerWidth]
@@ -31307,12 +31309,17 @@
 
 	var _mario2 = _interopRequireDefault(_mario);
 
+	var _level = __webpack_require__(497);
+
+	var _level2 = _interopRequireDefault(_level);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var App = exports.App = function App() {
 	  return _react2.default.createElement(
 	    'div',
 	    { style: { position: 'absolute', width: '100%', height: '100%' } },
+	    _react2.default.createElement(_level2.default, null),
 	    _react2.default.createElement(_mario2.default, null)
 	  );
 	};
@@ -31596,6 +31603,104 @@
 	    orientation: orientation
 	  };
 	};
+
+/***/ },
+/* 497 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(298);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(469);
+
+	var _ground = __webpack_require__(498);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var level = function level(_ref) {
+	  var _level = _ref.level;
+
+	  var composedMap = [];
+	  for (var i = 0; i < _level.length; i++) {
+	    for (var j = 0; j < _level[i].length; j++) {
+	      var type = _level[i][j].type;
+	      var position = [i * 50, j * 50];
+	      switch (type) {
+	        case 'ground':
+	          composedMap.push(_react2.default.createElement(_ground.Ground, { position: position, key: i + '-' + j }));
+	        default:
+	          break;
+	      }
+	    }
+	  }
+
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    composedMap
+	  );
+	};
+
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    level: state.env
+	  };
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(level);
+
+/***/ },
+/* 498 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Ground = undefined;
+
+	var _react = __webpack_require__(298);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Ground = exports.Ground = function Ground(_ref) {
+	  var position = _ref.position;
+
+	  return _react2.default.createElement('div', {
+	    style: {
+	      position: 'absolute',
+	      width: '50px',
+	      height: '50px',
+	      bottom: position[0],
+	      left: position[1],
+	      background: 'url(\'images/brick.png\')'
+	    }
+	  });
+	};
+
+/***/ },
+/* 499 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var GROUND = { type: 'ground' };
+
+	var levelOne = exports.levelOne = [[GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND, GROUND]];
 
 /***/ }
 /******/ ]);

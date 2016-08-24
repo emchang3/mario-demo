@@ -10,18 +10,19 @@ import rootSaga from './sagas/sagas'
 import reducer from './reducers'
 
 import { App } from './app'
+import { levelOne } from './environment/levelOne'
 
 
 const sagaMiddleware = createSagaMiddleware()
 const initialState = {
   mario: {
-    position: [100, 100],
+    position: [50, 50],
     facing: 'right',
     moving: false,
     jumping: false,
     heading: 'none'
   },
-  env: [],
+  env: levelOne,
   weapons: [],
   powerUps: [],
   view: [0, window.innerWidth]
